@@ -1,0 +1,98 @@
+// store/base/fetchStoreFactory.js
+import { create } from "zustand";
+import {collectionsApi} from "@/js/api/collections/collectionsApi";
+
+/**
+ * Универсальный fetchStore с поддержкой фильтра
+ * @param {string} name — имя коллекции
+ * @param {(filters, item) => boolean} filterItemPredicate — предикат фильтрации
+ */
+export function createFetchStore({ name, idName="id", filterItemPredicate = null }){
+    return (set, get) => ({
+        name,
+        items: [],
+               isLoading: false,
+               isLoaded: false,
+               error: null,
+
+               getCollectionName: () => {
+                   const {name} = get();
+                   return name;
+               },
+
+               getItemName: () => {
+                   const {name} = get();
+
+                   if (name.endsWith("s")){
+                        return name.substring(0,name.length-1);
+                   }
+                   return name;
+               },
+
+               getItems: () => {
+                    const {items,getItemName} = get();
+                    return items.map(item=>({
+                            id:item[idName],
+                            type: getItemName(),
+                            item
+                        })
+                    );
+               },
+
+               /**
+                * Возвращает отфильтрованные элементы
+                * @param filters — объект с фильтрами
+                */
+               getFilteredItems: (filters = {}) => {
+                 const { items } = get();
+                 if (!filterItemPredicate) return items;
+                 return items.filter((item) => filterItemPredicate(filters, item));
+               },
+
+               /**
+                * Универсальный setter для items
+                */
+               setItems: (items, markLoaded = true) =>
+                 set({
+                   items: Array.isArray(items) ? items : [],
+                   isLoaded: !!markLoaded,
+                   isLoading: false,
+                   error: null,
+                 }),
+
+               fetchAll: async (force = false) => {
+                 const { name, isLoaded, items: prevItems } = get();
+                 if (isLoaded && !force) return;
+
+                 set({ isLoading: true, error: null });
+                 try {
+                   const data = await collectionsApi[name].list();
+
+                   console.log(`[${name}] fetched data:`, data);
+
+                   // 🔍 Проверяем, изменилась ли ссылка на массив
+                   const isSameRef = prevItems === data;
+                   console.log(`[${name}] items same reference?`, isSameRef);
+
+                   set({ items: data, isLoaded: true });
+                 } catch (error) {
+                   console.error(`[${name}] fetch error:`, error);
+                   set({ error });
+                 } finally {
+                   set({ isLoading: false });
+                 }
+               },
+
+               getById: (id) => get().items.find((x) => x.id === id),
+
+               addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+               updateItem: (id, updates) =>
+                 set((state) => ({
+                   items: state.items.map((x) => (x.id === id ? { ...x, ...updates } : x)),
+                 })),
+               removeItem: (id) =>
+                 set((state) => ({ items: state.items.filter((x) => x.id !== id) })),
+
+               clear: () => set({ items: [], isLoaded: false, error: null }),
+             });
+};

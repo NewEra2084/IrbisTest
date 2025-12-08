@@ -1,0 +1,105 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DAG Task Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans flex flex-col min-h-screen">
+<div class="flex-1 flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow sm:sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">DAG Task Tracker</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">Dashboard</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">Projects</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">Tasks</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-gray-900">Settings</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <section class="bg-white shadow">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap gap-3">
+            <div class="flex items-center space-x-2">
+                <label class="font-medium">Status:</label>
+                <select class="border rounded px-2 py-1">
+                    <option>All</option><option>Todo</option><option>In Progress</option><option>Done</option><option>Blocked</option>
+                </select>
+            </div>
+            <div class="flex items-center space-x-2">
+                <label class="font-medium">Assignee:</label>
+                <select class="border rounded px-2 py-1">
+                    <option>All</option><option>Alice</option><option>Bob</option><option>Carol</option>
+                </select>
+            </div>
+            <div class="flex items-center space-x-2">
+                <label class="font-medium">Priority:</label>
+                <select class="border rounded px-2 py-1">
+                    <option>All</option><option>Low</option><option>Medium</option><option>High</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="h-full border-gray-200 border-r w-16 hover:w-48 transition-width duration-300 overflow-hidden">
+            <div class="flex flex-col items-center py-4 h-full">
+                <button id="toggle" class="p-2 bg-gray-100 rounded-full mb-6">≡</button>
+                <div class="space-y-2 text-gray-700" id="items">
+                    <div class="flex items-center space-x-2 px-2"><span>🏠</span><span class="label hidden">Home</span></div>
+                    <div class="flex items-center space-x-2 px-2"><span>📅</span><span class="label hidden">Calendar</span></div>
+                    <div class="flex items-center space-x-2 px-2"><span>⚙️</span><span class="label hidden">Settings</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="p-6 flex-1 overflow-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Task Cards -->
+                <template id="task-template">
+                    <div class="bg-white p-4 rounded-xl shadow">
+                        <h2 class="font-semibold text-gray-800 mb-1">Task #</h2>
+                        <p class="text-sm text-gray-600 mb-2">Assignee: </p>
+                        <span class="inline-block px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Status</span>
+                    </div>
+                </template>
+            </div>
+        </main>
+    </div>
+</div>
+
+<footer class="bg-white border-t border-gray-200 py-4">
+    <div class="max-w-6xl mx-auto px-4 text-center text-gray-600">
+        © 2025 DAG Task Tracker. All rights reserved.
+    </div>
+</footer>
+
+<script>
+    // Sidebar labels toggle
+    const sidebar = document.getElementById('sidebar');
+    const labels = document.querySelectorAll('.label');
+    sidebar.addEventListener('mouseenter', () => labels.forEach(l => l.classList.remove('hidden')));
+    sidebar.addEventListener('mouseleave', () => labels.forEach(l => l.classList.add('hidden')));
+
+    // Populate tasks
+    const grid = document.querySelector('main > div');
+    const tmpl = document.getElementById('task-template');
+    const assignees = ['Alice','Bob','Carol'];
+    for (let i = 1; i <= 9; i++) {
+      const clone = tmpl.content.cloneNode(true);
+      clone.querySelector('h2').textContent = `Task #${i}`;
+      clone.querySelector('p').textContent = `Assignee: ${assignees[i % 3]}`;
+      grid.appendChild(clone);
+    }
+  </script>
+</body>
+</html>

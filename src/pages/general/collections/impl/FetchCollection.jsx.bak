@@ -1,0 +1,71 @@
+import { useEffect, useContext, useMemo } from 'react';
+import { PageContext } from "@/store/context/PageContext";
+import Pagination from '@/components/ui/pagination/Pagination';
+import AbstractListView from "@/components/ui/list/AbstractListView";
+
+function DefaultPreload() {
+  return <div className="text-sm">Loading...</div>;
+}
+
+function DefaultErrorContent({ ...error }) {
+  return <div className="text-red-500 text-sm">Ошибка загрузки: {error.message}</div>;
+}
+
+export default function FetchCollection({
+  collectionViewType = "grid",
+  itemView = {},
+  ElementContent,
+  PreloadContent = DefaultPreload,
+  ErrorContent = DefaultErrorContent
+}) {
+  const {collection, list, filters, pagination } = useContext(PageContext);
+
+  const { store:useStore } = list || {};
+  if (!useStore) {
+    console.warn("FetchCollection: store не найден в PageContext");
+    return null;
+  }
+
+  const { values: filterValues } = filters('user_list');
+  const { values: paginationValues, setPage, setPageSize } = pagination(collection);
+
+  // Подписка на состояние
+  const items = useStore(state => state.items); // чтобы гарантировать ререндер при изменении items
+  const isLoading = useStore(state => state.isLoading);
+  const error = useStore(state => state.error);
+  const fetchAll = useStore(state => state.fetchAll);
+
+  const getFilteredPage = useStore(state => state.getFilteredPage);
+
+  const page = useMemo(() => {
+    return getFilteredPage(filterValues,paginationValues);
+  },[items,filterValues, paginationValues]);
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
+
+  useEffect(() => {
+    if (paginationValues.page !== 1) {
+      setPage(1);
+    }
+  }, [filterValues]);
+
+  if (isLoading) return <PreloadContent />;
+  if (error) return <ErrorContent {...error} />;
+
+  return (
+    <div className="flex flex-col h-full max-h-full">
+        <div className="flex-1 overflow-auto">
+            <AbstractListView
+                  type={collectionViewType}
+                  items={page.items}
+                  itemView={itemView}
+                  ElementContent={ElementContent}
+            />
+        </div>
+
+        <Pagination page={paginationValues.page} pageSize={paginationValues.pageSize} total={page.count} onPageChange={setPage} onPageSizeChange={setPageSize}/>
+    </div>
+  );
+}

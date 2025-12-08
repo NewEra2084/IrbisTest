@@ -1,0 +1,63 @@
+import { useState, useCallback, memo } from 'react';
+import { Handle, Position, NodeToolbar } from 'reactflow';
+
+import {Container,Row,Col,ButtonToolbar,ButtonGroup,Button, DropdownButton, Dropdown} from 'react-bootstrap';
+
+import { EditText, EditTextarea } from 'react-edit-text';
+import '@/css/card.css';
+
+import EditableDropdownButton from '@/components/flow/card/EditableDropdownButton';
+
+export function EditableNode({id, data }) {
+
+
+    const typeItems = [
+                       {id:1,name:"back"},
+                       {id:2,name:"front"},
+        ];
+
+
+    const handleSave = ({ name, value, previousValue }) => {
+          data.onChange(id,value);
+          //alert(name + ' saved as: ' + value + ' (prev: ' + previousValue + ')');
+    };
+
+    const handleFormatValue = (v,defaultValue) => {
+        return v ? v : defaultValue
+    };
+
+
+
+  return (
+    <>
+        <Handle type="target" position={Position.Top} id="a"/>
+            <div className="card-header">
+                <div className="left">
+                    <EditableDropdownButton items={typeItems}/>
+                </div>
+                <div className="right">
+                    <ButtonToolbar>
+                      <ButtonGroup size="sm">
+                        <Button>
+                            <i className   ="bi bi-three-dots"></i>
+                        </Button>
+                        <Button>x</Button>
+                      </ButtonGroup>
+                    </ButtonToolbar>
+                </div>
+            </div>
+            <div className="card-body">
+                <Container>
+                    <Row>
+                        <Col className="nodrag"><EditText onSave={handleSave} formatDisplayText	= {(v) => handleFormatValue(v,"Node name")}/></Col>
+                    </Row>
+                </Container>
+            </div>
+            <div className="card-footer">
+            </div>
+        <Handle type="source" position={Position.Bottom} id="b"/>
+    </>
+  );
+};
+
+export default memo(EditableNode);

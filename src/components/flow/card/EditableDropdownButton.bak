@@ -1,0 +1,37 @@
+import {useState, memo} from 'react';
+
+import {DropdownButton, Dropdown, Form} from 'react-bootstrap';
+
+export function EditableDropdownButton({items}) {
+    const [allItems,setItems] = useState(items);
+    const [filteredItems, setFilteredItems] = useState(items);
+    const [selectedItem, setSelectedItem] = useState(null);
+
+    const handleSelect = (id,name) => {
+          setSelectedItem({id:id,name:name});
+    };
+
+    const handleFilter = (e) => {
+        setFilteredItems(
+            allItems.filter(
+                (item) => item.name.toLowerCase().includes(e.target.value.toLowerCase())
+            )
+        );
+    }
+
+  return (
+    <>
+        <DropdownButton
+            className="nodrag" size="sm"
+            title={selectedItem ? selectedItem.name: <i className="bi bi-list-task"></i>
+        }>
+            <Form.Control autoFocus className="mx-3 my-2 w-auto" placeholder="Type to filter..." onChange={handleFilter}/>
+            {filteredItems.map(item =>
+                 <Dropdown.Item key={item.id} href={"#item-" + item.id} onClick={() => handleSelect(item.id,item.name)}>{item.name}</Dropdown.Item>
+            )}
+        </DropdownButton>
+    </>
+  );
+};
+
+export default memo(EditableDropdownButton);

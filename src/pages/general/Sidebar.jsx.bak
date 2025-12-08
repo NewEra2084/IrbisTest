@@ -1,0 +1,35 @@
+import { useEffect } from "react";
+import SidebarItem from "./SidebarItem";
+
+export default function Sidebar({ items = [] }) {
+  useEffect(() => {
+    const sidebar = document.getElementById("sidebar");
+    const labels = sidebar.querySelectorAll(".label");
+
+    const showLabels = () => labels.forEach(l => l.classList.remove("hidden"));
+    const hideLabels = () => labels.forEach(l => l.classList.add("hidden"));
+
+    sidebar.addEventListener("mouseenter", showLabels);
+    sidebar.addEventListener("mouseleave", hideLabels);
+
+    return () => {
+      sidebar.removeEventListener("mouseenter", showLabels);
+      sidebar.removeEventListener("mouseleave", hideLabels);
+    };
+  }, []);
+
+  return (
+    <aside
+      id="sidebar"
+      className="bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-16 hover:w-48  transition-[width] duration-300 overflow-hidden"
+    >
+      <div className="flex flex-col items-center py-4 h-full">
+        <div className="space-y-2 text-gray-700 dark:text-gray-300 w-full px-2">
+          {items.map(item => (
+            <SidebarItem key={item.key} {...item} />
+          ))}
+        </div>
+      </div>
+    </aside>
+  );
+}

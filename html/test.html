@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+</head>
+<body class="bg-gray-50 font-sans h-screen">
+<div class="flex h-full">
+
+    <!-- Sidebar -->
+    <aside class="w-16 bg-gray-100 border-r flex flex-col items-center py-4 space-y-6">
+        <i class="fas fa-power-off text-pink-500"></i>
+        <i class="fas fa-bars"></i>
+        <i class="fas fa-calendar"></i>
+        <i class="fas fa-comment-dots"></i>
+        <i class="fas fa-envelope"></i>
+        <i class="fas fa-layer-group"></i>
+        <i class="fas fa-heart"></i>
+        <i class="fas fa-chart-line"></i>
+        <i class="fas fa-book"></i>
+        <i class="fas fa-cog"></i>
+        <i class="fas fa-circle-half-stroke"></i>
+        <i class="fas fa-circle-user"></i>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Topbar -->
+        <header class="flex items-center justify-between px-6 py-4 bg-white border-b shadow">
+            <div class="flex items-center space-x-4">
+                <i class="fas fa-bars text-gray-600"></i>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input
+                            type="text"
+                            placeholder="Search..."
+                            class="pl-10 pr-4 py-2 border rounded-md text-sm focus:outline-none"
+                    />
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-5">
+                <span class="text-sm">🇺🇸 English</span>
+                <i class="fas fa-bell text-gray-500"></i>
+                <i class="fas fa-users text-gray-500"></i>
+                <i class="fas fa-gear text-gray-500"></i>
+                <i class="fas fa-moon text-gray-500"></i>
+                <i class="fas fa-expand text-gray-500"></i>
+
+                <div class="flex items-center space-x-2 p-2 border rounded-md shadow">
+                    <img
+                            src="https://i.pravatar.cc/40"
+                            alt="User"
+                            class="h-8 w-8 rounded-full"
+                    />
+                    <div class="text-sm">
+                        <div class="font-semibold">Michael Berndt</div>
+                        <div class="text-gray-500 text-xs">Founder</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="p-6 overflow-auto">
+            <h2 class="text-xl font-bold mb-4">Dashboard</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Card 1 -->
+                <div class="bg-white p-4 shadow rounded border">
+                    <div class="text-sm text-gray-500">Campaign Sent</div>
+                    <div class="text-2xl font-bold">9,184</div>
+                    <div class="text-green-500 text-sm mt-1">↑ 3.27%</div>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-4 shadow rounded border">
+                    <div class="text-sm text-gray-500">New Leads</div>
+                    <div class="text-2xl font-bold">3,254</div>
+                    <div class="text-green-500 text-sm mt-1">↑ 5.38%</div>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-teal-500 text-white p-4 shadow rounded border">
+                    <div class="text-sm">Booked Revenue</div>
+                    <div class="text-2xl font-bold">$253k</div>
+                    <div class="text-green-200 text-sm mt-1">↑ 11.7%</div>
+                </div>
+                <!-- Add more cards as needed -->
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

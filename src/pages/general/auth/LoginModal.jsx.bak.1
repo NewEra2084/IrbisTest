@@ -1,0 +1,61 @@
+// components/LoginModal.jsx
+import { useAuthStore } from "@/store/authStore";
+import SimpleSubmitForm from "@/pages/general/forms/SimpleSubmitForm";
+import * as yup from "yup";
+import { useState } from "react";
+
+// Кастомная кнопка для сабмита
+const LoginButton = ({ isSubmitting, isValid }) => (
+  <button
+    type="submit"
+    disabled={isSubmitting}
+    className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+  >
+    {isSubmitting ? "Входим..." : "Войти"}
+  </button>
+);
+
+export default function LoginModal() {
+  const { isLoginModalOpen, login, closeLoginModal } = useAuthStore();
+  const [error, setError] = useState("");
+
+  if (!isLoginModalOpen) return null;
+
+  // Схема валидации
+  const schema = yup.object().shape({
+    username: yup.string().email("Введите корректный email").required("Введите логин"),
+    password: yup.string().required("Введите пароль"),
+  });
+
+  // Функция сабмита
+  const handleSubmit = async (values) => {
+    setError("");
+    try {
+      await login(values);
+      closeLoginModal();
+    } catch (err) {
+      setError("Неверный логин или пароль");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+      <div className="bg-white p-6 rounded-xl shadow-md w-80">
+        <h2 className="text-xl font-bold mb-4">Вход</h2>
+
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+        <SimpleSubmitForm
+          fields={[
+            { key: "username", placeholder: "Логин", type: "input" },
+            { key: "password", placeholder: "Пароль", type: "password" },
+            { key: "rememberme", label:"Запомнить меня", type:"toggle"},
+          ]}
+          schema={schema}
+          onSubmit={handleSubmit}
+          renderSubmit={LoginButton}
+        />
+      </div>
+    </div>
+  );
+}

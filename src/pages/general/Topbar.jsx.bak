@@ -1,0 +1,83 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBars,
+  faSearch,
+  faBell,
+  faUsers,
+  faGear,
+  faMoon,
+  faExpand
+} from '@fortawesome/free-solid-svg-icons';
+
+import LanguageSelector from '@/components/ui/LanguageSelector';
+import ThemeSelector from '@/components/ui/ThemeSelector';
+import FilterToggleButton from '@/components/ui/FilterToggleButton'; // <== Убедись, что импорт верный
+
+export default function Topbar() {
+  return (
+    <div className="flex flex-wrap items-center justify-between px-4 py-2 bg-white shadow-sm dark:bg-gray-900">
+      {/* Left section */}
+      <div className="flex items-center space-x-4 flex-wrap">
+        {/* Logo */}
+        <div className="flex items-center space-x-2">
+          <img
+            src="/img/logo-light.png"
+            alt="Logo"
+            className="h-8 dark:hidden"
+          />
+          <img
+            src="/img/logo-dark.png"
+            alt="Logo"
+            className="h-8 hidden dark:block"
+          />
+          <span className="text-lg font-semibold text-gray-800 dark:text-white">DAGMind</span>
+        </div>
+
+        {/* Icon buttons */}
+        <div className="flex items-center space-x-2">
+          {[faBars, faBell, faUsers, faGear, faMoon, faExpand].map((icon, index) => (
+            <button
+              key={index}
+              className="p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+            >
+              <FontAwesomeIcon icon={icon} className="h-5 w-5" />
+            </button>
+          ))}
+        </div>
+
+        {/* Search bar */}
+        <div className="relative mt-2 md:mt-0 w-full md:w-auto">
+          <FontAwesomeIcon
+            icon={faSearch}
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500"
+          />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full md:w-64 pl-10 pr-4 py-1.5 border rounded-md text-sm text-gray-800 dark:text-gray-100 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
+          />
+        </div>
+      </div>
+
+      {/* Right section */}
+      <div className="flex items-center space-x-3 mt-2 md:mt-0">
+        <FilterToggleButton />
+        <ThemeSelector />
+        <LanguageSelector />
+
+        {/* User Info */}
+        <div className="flex items-center space-x-2 px-2 py-1 border rounded-md shadow-sm border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800">
+          <img
+            src="https://i.pravatar.cc/40"
+            alt="User"
+            className="h-8 w-8 rounded-full"
+          />
+          <div className="text-left text-sm hidden sm:block">
+            <div className="font-semibold text-gray-800 dark:text-white">Michael Berndt</div>
+            <div className="text-gray-500 dark:text-gray-400 text-xs">Founder</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,10 @@
+{
+  "filters": {
+    "show": "显示筛选器",
+    "hide": "隐藏筛选器",
+    "toggleAriaLabel": "切换筛选器"
+  },
+  "language": {
+    "select": "选择语言"
+  }
+}

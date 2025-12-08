@@ -1,0 +1,39 @@
+import { useState } from 'react';
+
+import Header from "@/pages/general/Header";
+import Filters from "@/pages/general/Filters";
+import Sidebar from "@/pages/general/Sidebar";
+import Footer from "@/pages/general/Footer";
+import Topbar from "@/pages/general/Topbar";
+
+import AbstractContent from "@/pages/custom/content/AbstractContent";
+
+export default function Page({data}) {
+
+  const [filters, setFilters] = useState({});
+
+  const handleFiltersChange = (key, value) => {
+        setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const mergedFilters = data.filters.map((filter) => ({
+      ...filter,
+      value: filters[filter.key] ?? null, // null или значение из state
+  }));
+
+  return (
+    <div className="bg-gray-50 font-sans flex flex-col min-h-screen dark:bg-gray-900 dark:text-white">
+      <div className="flex-1 flex flex-col">
+        <Topbar/>
+        <Filters filters={mergedFilters} onChange={handleFiltersChange}/>
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar items={data.sidebarItems}/>
+          <main className="p-6 flex-1 overflow-auto border-b border-t border-gray-200 dark:border-gray-700">
+            <AbstractContent type={data.content.type} data={{...data.content.data, filters: filters,}} />
+          </main>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+}

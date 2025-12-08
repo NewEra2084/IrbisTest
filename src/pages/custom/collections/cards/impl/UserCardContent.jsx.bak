@@ -1,0 +1,30 @@
+export default function UserCardContent({ ...user }) {
+  return (
+    <div className="flex items-start gap-4">
+      {/* Аватар */}
+      <img
+        src={user.avatar}
+        alt={user.fullName}
+        className="w-12 h-12 rounded-full object-cover"
+      />
+
+      {/* Контент справа */}
+      <div className="flex flex-col">
+        <h2 className="font-semibold text-gray-800 dark:text-gray-100">
+          {user.fullName}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 text-xs">@{user.username}</p>
+        <p className="text-gray-500 dark:text-gray-400 text-xs">
+          Skills: {user.skills.join(', ')}
+        </p>
+        <p className="text-gray-500 dark:text-gray-400 text-xs">
+          Role: {user.role}
+        </p>
+        {/* Статус под текстом */}
+        <span className="mt-1 px-2 py-1 text-xs rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 inline-flex w-max">
+          {user.status}
+        </span>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,10 @@
+{
+  "filters": {
+    "show": "Filter anzeigen",
+    "hide": "Filter ausblenden",
+    "toggleAriaLabel": "Filter umschalten"
+  },
+  "language": {
+    "select": "Sprache wählen"
+  }
+}
