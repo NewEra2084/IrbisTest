@@ -1,13 +1,14 @@
+import { useFetchRolesStore } from "../store/list/fetch/rolesFetchListStore";
+
 export function createComponentMap(modules, suffix) {
   return Object.fromEntries(
     Object.entries(modules).map(([path, mod]) => {
-
       const match = path.match(new RegExp(`\/(\\w+)${suffix}\\.\\w+$`));
       if (!match) return [];
 
       const originalName = match[1]; // например: "LazySelect"
       const type = originalName
-        .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+        .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
         .toLowerCase(); // → "lazy_select"
 
       const exported = mod.default ?? Object.values(mod)[0];
@@ -19,22 +20,21 @@ export function createComponentMap(modules, suffix) {
   );
 }
 
-export function createAliasMap(modules,suffix){
-    return createComponentMap(modules,suffix);
+export function createAliasMap(modules, suffix) {
+  return createComponentMap(modules, suffix);
 }
 
 export function bindActions(actions, ctx, sender) {
   const bound = {};
 
   for (const [key, actionFactory] of Object.entries(actions)) {
-    if (typeof actionFactory === 'function') {
+    if (typeof actionFactory === "function") {
       bound[key] = actionFactory(ctx, sender); // создаём обработчик, передаём контекст
     }
   }
 
   return bound;
 }
-
 
 /*
     в контекст будет импортировано, если елемент строка, то сама функция с таким же названием, если элемент
@@ -45,11 +45,11 @@ export function bindActions(actions, ctx, sender) {
         "closeAllModal", // можно смешивать
     ]
 */
-export function extractStoreMethod(store, method){
-    return store((state) => state[method]);
+export function extractStoreMethod(store, method) {
+  return store((state) => state[method]);
 }
 
-export function createContextBindings(store, componentName, methods){
+export function createContextBindings(store, componentName, methods) {
   const result = {};
   result[componentName] = {};
 
@@ -63,7 +63,7 @@ export function createContextBindings(store, componentName, methods){
   });
 
   return result;
-};
+}
 
 /**
  * Разбирает путь по шаблону и возвращает объект параметров.
@@ -84,7 +84,6 @@ export function parseUrlPathParams(path, pattern) {
   }
 }
 
-
 /**
  * Определяет компонент по шаблону (JSX-функция или строка)
  * @param {any} template - шаблон (строка или функция)
@@ -92,7 +91,12 @@ export function parseUrlPathParams(path, pattern) {
  * @param {Object} props - пропсы для вызова template-функции
  * @param {string} defaultValue - значение по умолчанию ("default")
  */
-export function resolveTemplateComponent(template, componentMap, props = {}, defaultValue = "default") {
+export function resolveTemplateComponent(
+  template,
+  componentMap,
+  props = {},
+  defaultValue = "default"
+) {
   let templateType;
 
   if (typeof template === "function") {
@@ -104,7 +108,8 @@ export function resolveTemplateComponent(template, componentMap, props = {}, def
   }
 
   if (typeof templateType === "function") return templateType;
-  if (typeof templateType === "string") return componentMap[templateType] ?? componentMap[defaultValue];
+  if (typeof templateType === "string")
+    return componentMap[templateType] ?? componentMap[defaultValue];
   return componentMap[defaultValue];
 }
 
@@ -117,42 +122,74 @@ export function resolveTemplateComponent(template, componentMap, props = {}, def
  * const translated = translateDeep(data, t);
  */
 export const translateDeep = function (data, t) {
-    // Регулярка для @i18n(key) или @i18n('key') или @i18n("key")
-    const i18nRegexp = /^@i18n\((['"]?)([^'")]+)\1\)$/;
+  // Регулярка для @i18n(key) или @i18n('key') или @i18n("key")
+  const i18nRegexp = /^@i18n\((['"]?)([^'")]+)\1\)$/;
 
-    const walk = (value) => {
-        if (typeof value === 'string') {
-            const match = value.match(i18nRegexp);
-            if (match) {
-                const key = match[2];
-                const translated = t(key);
-                return translated || value; // если нет перевода — оставить как есть
-            }
-            return value;
-        }
+  const walk = (value) => {
+    if (typeof value === "string") {
+      const match = value.match(i18nRegexp);
+      if (match) {
+        const key = match[2];
+        const translated = t(key);
+        return translated || value; // если нет перевода — оставить как есть
+      }
+      return value;
+    }
 
-        if (Array.isArray(value)) {
-            return value.map(item => walk(item));
-        }
+    if (Array.isArray(value)) {
+      return value.map((item) => walk(item));
+    }
 
-        if (value && typeof value === 'object') {
-            Object.keys(value).forEach((k) => {
-                value[k] = walk(value[k]);
-            });
-            return value;
-        }
+    if (value && typeof value === "object") {
+      Object.keys(value).forEach((k) => {
+        value[k] = walk(value[k]);
+      });
+      return value;
+    }
 
-        return value;
-    };
+    return value;
+  };
 
-    return walk(data);
+  return walk(data);
 };
+
+export async function modifyCollectionFields(appCtx, list, soughtCollection,option) {
+  function lazyOrFetch(key){
+    Object.keys(appCtx.list).forEach((item)=>{
+      if(item === key){
+        if(appCtx.list[item].isLazy){
+          return "fetch";
+        }else{
+          return "lazy";
+        }
+      }
+    })
+  }
+  function recursion(list){
+    list.map((field)=>{      
+      if(lazyOrFetch(field.key)==="fetch"){
+        // const a = useFetchRolesStore();
+        // a.fetchAll();
+      }
+      if(field.key === soughtCollection){
+        return {...field, ...option};
+      }
+      if(Array.isArray(field) && field.list){
+        return recursion(field.list);
+      }
+      return field;
+    })
+  }
+
+  return recursion(list);
+}
 
 export const modifyFormField = function (fields, path, changes) {
   const parts = path.split(".");
+  console.log("parts ", parts, "path ", path, "fields", fields);
 
   function recursiveModify(arr, index = 0) {
-    return arr.map(field => {
+    return arr.map((field) => {
       if (field.key !== parts[index]) return field;
 
       if (index === parts.length - 1) {
@@ -172,24 +209,23 @@ export const modifyFormField = function (fields, path, changes) {
   }
 
   return recursiveModify(fields);
-}
+};
 
-export const extractCollectionsFormFields = function (fields){
-    const collections = [];
+export const extractCollectionsFormFields = function (fields) {
+  const collections = [];
 
-    function recursiveExtract(arr){
-        arr.map(field => {
-           if (field.collection && !collections.includes(field.collection)){
-                collections.push(field.collection);
-           }
-           if (field.type == 'array'){
-                recursiveExtract(field.fields);
-           }
-        });
-    }
-    return collections;
-}
-
+  function recursiveExtract(arr) {
+    arr.map((field) => {
+      if (field.collection && !collections.includes(field.collection)) {
+        collections.push(field.collection);
+      }
+      if (field.type == "array") {
+        recursiveExtract(field.fields);
+      }
+    });
+  }
+  return collections;
+};
 
 /**
  * Преобразует Ant-паттерн в регулярное выражение.
@@ -202,26 +238,26 @@ export const extractCollectionsFormFields = function (fields){
  */
 function antPatternToRegExp(pattern, caseSensitive = false) {
   // Нормализуем слэши
-  pattern = pattern.replace(/\/+/g, '/');
+  pattern = pattern.replace(/\/+/g, "/");
 
   // ШАГ 1 — экранируем все RegExp-символы, кроме * и ?
-  pattern = pattern.replace(/([.+^${}()|[\]\\])/g, '\\$1');
+  pattern = pattern.replace(/([.+^${}()|[\]\\])/g, "\\$1");
 
   // ШАГ 2 — заменяем ** временной меткой
-  pattern = pattern.replace(/\*\*/g, '###DOUBLE_STAR###');
+  pattern = pattern.replace(/\*\*/g, "###DOUBLE_STAR###");
 
   // ШАГ 3 — заменяем одиночный * на [^/]*  (не跨 слэш)
-  pattern = pattern.replace(/\*/g, '[^/]*');
+  pattern = pattern.replace(/\*/g, "[^/]*");
 
   // ШАГ 4 — заменяем ? на один символ кроме '/'
-  pattern = pattern.replace(/\?/g, '[^/]');
+  pattern = pattern.replace(/\?/g, "[^/]");
 
   // ШАГ 5 — восстанавливаем ** → .*
-  pattern = pattern.replace(/###DOUBLE_STAR###/g, '.*');
+  pattern = pattern.replace(/###DOUBLE_STAR###/g, ".*");
 
   // Анкорим: полный путь
-  const flags = caseSensitive ? '' : 'i';
-  return new RegExp('^' + pattern + '$', flags);
+  const flags = caseSensitive ? "" : "i";
+  return new RegExp("^" + pattern + "$", flags);
 }
 
 /**
@@ -236,12 +272,16 @@ export function matchAntPath(pattern, path, options = {}) {
 
   if (normalizeSlash) {
     // Нормализуем повторяющиеся слэши, удаляем лишний завершающий слэш
-    pattern = pattern.replace(/\/+/g, '/');
-    path = path.replace(/\/+/g, '/');
+    pattern = pattern.replace(/\/+/g, "/");
+    path = path.replace(/\/+/g, "/");
   }
 
   // Специальный случай: если pattern == path (быстрая проверка)
-  if (caseSensitive ? pattern === path : pattern.toLowerCase() === path.toLowerCase()) {
+  if (
+    caseSensitive
+      ? pattern === path
+      : pattern.toLowerCase() === path.toLowerCase()
+  ) {
     return true;
   }
 

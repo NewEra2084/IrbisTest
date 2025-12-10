@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { PageContext, usePageContextValue } from "@/store/context/PageContext";
 
 import Header from "@/pages/general/Header";

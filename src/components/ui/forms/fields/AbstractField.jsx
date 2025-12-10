@@ -13,9 +13,7 @@ export default function AbstractField({ field, register, errors }) {
   // достаём ошибку по точному пути
   const error = get(errors, keyName);
 
-  console.log(type);
-
-  if (type == "select") console.log(JSON.stringify(field));
+  // if (type == "select") console.log(JSON.stringify(field));
 
   return (
     <Component

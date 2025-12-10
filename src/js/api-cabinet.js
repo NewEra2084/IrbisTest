@@ -44,5 +44,11 @@ export const cabinetApi = {
             {key:1,value:"ИТ компания "+lang},
             {key:2,value:"Другая компания "+lang},
         ]);
+  },
+  getOrgRoles : async (lang) => {
+        return await mockApi([
+            {key:1,value:"Пользователь "+lang},
+            {key:2,value:"Другая роль "+lang},
+        ]);
   }
 };

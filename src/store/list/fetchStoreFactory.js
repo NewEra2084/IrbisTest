@@ -253,7 +253,7 @@ export function createFetchStore({
       try {
         const data = await collectionsApi[name].list();
 
-        const raw = (typeof data === 'array') ? data : data.items;
+        const raw = Array.isArray(data) ? data : data.items;
 
         const normalize = get().normalizeItem;
 

@@ -5,9 +5,6 @@ import FetchCollection from './impl/FetchCollection';
 
 export default function AbstractCollection({...props}) {
   const { collection, list, filters, pagination } = useContext(PageContext);
-
-
-
   const Component = list.isLazy ? LazyCollection : FetchCollection;
   //const Component = FetchCollection;
 

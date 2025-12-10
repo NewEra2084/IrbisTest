@@ -11,7 +11,7 @@ function extractStoresByCollection (appCtx, collection, keys = []) {
       }
       return acc;
     }, {});
-};
+}
 
 export const collectionPageContextStructure = pageContextStructBuilder(
     (location) => location.pathname.startsWith("/collections/"),

@@ -10,7 +10,7 @@ export function bindEventActions(appCtx){
         res[key] = value(appCtx);
     });
     return res;
-};
+}
 
 export function handleEvent(eventActions, event){
     const parts = event.title.split(/\./);
@@ -27,10 +27,10 @@ export function handleEvent(eventActions, event){
             actionFn(event.message);
         }
     }
-};
+}
 
 export function handleEvents(eventActions, events){
-    events.forEach((event) => {
+    events?.forEach((event) => {
         handleEvent(eventActions,event);
     });
-};
+}

@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import GridFormModalContent from "./GridFormModalContent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { useFetchRolesStore } from "../../../../../store/list/fetch/rolesFetchListStore";
+import { modifyCollectionFields } from "../../../../../js/utils";
+import { AppContext } from "../../../../../store/context/AppContext";
 
 export default function LazyGridFormModalContent({
   modalKey,
@@ -14,12 +17,20 @@ export default function LazyGridFormModalContent({
   const [loading, setLoading] = useState(true);
   const [fields, setFields] = useState(null);
   const [error, setError] = useState(null);
-
+  const context = useContext(AppContext);
+  
   useEffect(() => {
     let isMounted = true;
     const fetchFields = async () => {
       try {
         const data = await loadFields();
+        const store = await modifyCollectionFields(context, data, "users", {
+          options: {}
+        });
+
+        console.log(data);
+        console.log(store);
+        
         if (isMounted) {
           setFields(data);
           setLoading(false);
@@ -32,11 +43,10 @@ export default function LazyGridFormModalContent({
       }
     };
     fetchFields();
-
     return () => {
       isMounted = false;
     };
-  }, [loadFields]);
+  }, [loadFields,context]);
 
   if (loading) {
     return (

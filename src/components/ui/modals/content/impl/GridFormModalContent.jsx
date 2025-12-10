@@ -5,6 +5,7 @@ import ExternalSubmitButton from "@/components/ui/forms/controls/buttons/Externa
 
 export default function GridFormModalContent({ modalKey, onSubmit, ...props }) {
   const [error, setError] = useState("");
+  
 
   const resolvedOnSubmit = typeof onSubmit === "function" ? onSubmit(modalKey, setError) : undefined;
   const resolvedProps = { ...props, onSubmit: resolvedOnSubmit };

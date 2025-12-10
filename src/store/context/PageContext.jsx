@@ -19,7 +19,7 @@ function defaultPageContextBuilder(location, appCtx){
     const stores = extractStoresByCollection(appCtx, collection, storesKeys);
 
     return addContextType(other,"default");
-};
+}
 
 
 function matchSimpleRule(location, rule){

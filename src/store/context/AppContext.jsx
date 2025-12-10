@@ -4,10 +4,10 @@ import { createAliasMap } from "@/js/utils";
 // Подгружаем все fetch и lazy сторы
 const listFetchModules = import.meta.glob('../list/fetch/*FetchListStore.js', { eager: true });
 
-const listFetchStoreMap = createAliasMap(listFetchModules, "LazyListStore");
+const listFetchStoreMap = createAliasMap(listFetchModules, "FetchListStore");
 
-const listLazyModules = import.meta.glob('../list/lazy/*ListStore.js', { eager: true });
-const listLazyStoreMap = createAliasMap(listLazyModules, "ListStore");
+const listLazyModules = import.meta.glob('../list/lazy/*LazyListStore.js', { eager: true });
+const listLazyStoreMap = createAliasMap(listLazyModules, "LazyListStore");
 
 // Импорты глобальных сторов
 import { useUserStore } from "@/store/userStore";
