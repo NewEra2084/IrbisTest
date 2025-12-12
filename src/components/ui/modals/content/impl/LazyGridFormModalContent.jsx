@@ -8,7 +8,7 @@ import { AppContext } from "../../../../../store/context/AppContext";
 
 export default function LazyGridFormModalContent({
   modalKey,
-  loadFields,       // функция, которая вернет поля с сервера
+  loadFields, // функция, которая вернет поля с сервера
   onSubmit,
   validationMessages,
   defaultValues = {},
@@ -18,21 +18,19 @@ export default function LazyGridFormModalContent({
   const [fields, setFields] = useState(null);
   const [error, setError] = useState(null);
   const context = useContext(AppContext);
-  
+
   useEffect(() => {
     let isMounted = true;
     const fetchFields = async () => {
       try {
         const data = await loadFields();
-        const store = await modifyCollectionFields(context, data, "users", {
-          options: {}
-        });
+        const store = await modifyCollectionFields(context, data, "orgType");
 
         console.log(data);
         console.log(store);
-        
+
         if (isMounted) {
-          setFields(data);
+          setFields(store);
           setLoading(false);
         }
       } catch (err) {
@@ -46,22 +44,22 @@ export default function LazyGridFormModalContent({
     return () => {
       isMounted = false;
     };
-  }, [loadFields,context]);
+  }, [loadFields, context]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-40">
-        <FontAwesomeIcon icon={faSpinner} spin className="w-6 h-6 text-gray-600" />
+        <FontAwesomeIcon
+          icon={faSpinner}
+          spin
+          className="w-6 h-6 text-gray-600"
+        />
       </div>
     );
   }
 
   if (error) {
-    return (
-      <div className="p-4 text-red-500 text-sm">
-        {error}
-      </div>
-    );
+    return <div className="p-4 text-red-500 text-sm">{error}</div>;
   }
 
   return (

@@ -1,4 +1,5 @@
 import { useFetchRolesStore } from "../store/list/fetch/rolesFetchListStore";
+import { useFetchUsersStore } from "../store/list/fetch/usersFetchListStore";
 
 export function createComponentMap(modules, suffix) {
   return Object.fromEntries(
@@ -153,40 +154,52 @@ export const translateDeep = function (data, t) {
   return walk(data);
 };
 
-export async function modifyCollectionFields(appCtx, list, soughtCollection,option) {
-  function lazyOrFetch(key){
-    Object.keys(appCtx.list).forEach((item)=>{
-      if(item === key){
-        if(appCtx.list[item].isLazy){
-          return "fetch";
-        }else{
-          return "lazy";
-        }
+export async function modifyCollectionFields(appCtx, list, soughtCollection) {
+  const query = [];
+  recursion(list);
+  const changed = query.map((item) => {    
+    return appCtx.list[item].store.getState().fetchAll();
+  });
+  return Promise.all(changed).then(() => {
+    return addOptions(list);
+  });
+
+  function recursion(list) {
+    return list.map((field) => {
+      const isLazy = appCtx.list[field.collection]?.isLazy;
+      const isLoaded = appCtx.list[field.collection]?.store.getState().isLoaded;
+
+      if (!isLazy && !isLoaded && isLazy != null) {
+        query.push(field.collection);
+        // appCtx.list.users.store.getState().fetchAll().then(res=> console.log("cathed", res));
       }
-    })
-  }
-  function recursion(list){
-    list.map((field)=>{      
-      if(lazyOrFetch(field.key)==="fetch"){
-        // const a = useFetchRolesStore();
-        // a.fetchAll();
-      }
-      if(field.key === soughtCollection){
-        return {...field, ...option};
-      }
-      if(Array.isArray(field) && field.list){
+      if (Array.isArray(field) && field.list) {
         return recursion(field.list);
       }
       return field;
-    })
+    });
   }
-
-  return recursion(list);
+  function addOptions(list) {
+    return list.map((field) => {
+      if (field.key === soughtCollection) {
+        return {
+          ...field,
+          options: appCtx.list[field.collection]?.store
+            .getState()
+            .getItems()
+            .map((item, id) => ({ key: id, value: item.item.fullName })),
+        };
+      }
+      if (Array.isArray(field) && field.list) {
+        return recursion(field.list);
+      }
+      return field;
+    });
+  }
 }
 
 export const modifyFormField = function (fields, path, changes) {
   const parts = path.split(".");
-  console.log("parts ", parts, "path ", path, "fields", fields);
 
   function recursiveModify(arr, index = 0) {
     return arr.map((field) => {
