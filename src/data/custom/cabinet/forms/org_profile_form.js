@@ -14,22 +14,19 @@ export const orgProfileFormData = {
                 //{ method: "min", args: [18], message: "Возраст должен быть >= {1}" }
             ]
         },
-        {key:"orgRole", label:"@i18n(form.field.org_role)", type:"select",
+        {key:"orgRole", collection: "roles", label:"@i18n(form.field.org_role)", type:"select",
             description:"@i18n(form.description.org_role)",
             options:[
-                {key:1,value:"Пользователь"},
-                {key:2,value:"Другая роль"},
             ],
 
             validation: [
                 { method: "required" }
             ]
         },
-        {key:"orgType", label:"@i18n(form.field.org_type)", type:"select",
+        {key:"orgType", collection: "users", label:"@i18n(form.field.org_type)", type:"select",
             description:"@i18n(form.description.org_type)",
             options:[
-                {key:1,value:"ИТ компания"},
-                {key:2,value:"Другая компания"},
+                
             ],
 
             validation: [

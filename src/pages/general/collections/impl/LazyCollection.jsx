@@ -22,41 +22,41 @@ export default function LazyCollection({
   const { collection, list, filters, pagination } = useContext(PageContext);
 
   const { store: useStore } = list || {};
-  if (!useStore) return null;
-
+  
   const { values: filterValues } = filters("user_list");
   const { values: paginationValues, setPage, setPageSize } = pagination(collection);
-
+  
   const page = useStore((s) => s.lastPageData) || { items: [], count: 0 };
-
+  
   const isLoading = useStore((s) => s.isLoading);
   const error = useStore((s) => s.error);
   const fetchPage = useStore((s) => s.fetchFilteredPage);
-
+  
   // Загружаем страницу данных
   useEffect(() => {
     fetchPage(filterValues, paginationValues);
   }, [fetchPage, filterValues, paginationValues]);
-
+  
   // Сброс страницы при изменении фильтров
   useEffect(() => {
-      if (paginationValues.page !== 1) {
-        setPage(1);
-      }
+    if (paginationValues.page !== 1) {
+      setPage(1);
+    }
   }, [filterValues]);
-
+  
+  if (!useStore) return null;
   if (isLoading) return <PreloadContent />;
   if (error) return <ErrorContent {...error} />;
-
+  
   const Collection = () => (
     <AbstractListView
-      type={collectionViewType}
-      items={page.items}
-      itemView={itemView}
-      ElementContent={ElementContent}
+    type={collectionViewType}
+    items={page.items}
+    itemView={itemView}
+    ElementContent={ElementContent}
     />
   );
-
+  
   const PaginationBlock = () => (
     <Pagination
       page={paginationValues.page}
@@ -64,7 +64,7 @@ export default function LazyCollection({
       total={page.count}
       onPageChange={setPage}
       onPageSizeChange={setPageSize}
-    />
+      />
   );
 
   if (typeof children === "function") {
