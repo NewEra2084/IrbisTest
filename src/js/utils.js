@@ -154,6 +154,14 @@ export const translateDeep = function (data, t) {
   return walk(data);
 };
 
+/**
+ *
+ * Возвращает массив измененных полей
+ * @param {object} appCtx - AppContext
+ * @param {object[]} list - массив полей
+ * @param {string} soughtCollection - поле в котором нужно подменить опции
+ * @returns {object[]}
+ */
 export async function modifyCollectionFields(appCtx, list, soughtCollection) {
   const query = [];
   fetchCollections(list);
