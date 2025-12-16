@@ -156,42 +156,52 @@ export const translateDeep = function (data, t) {
 
 export async function modifyCollectionFields(appCtx, list, soughtCollection) {
   const query = [];
-  recursion(list);
-  const changed = query.map((item) => {    
+  fetchCollections(list);
+  const changed = query.map((item) => {
     return appCtx.list[item].store.getState().fetchAll();
   });
-  return Promise.all(changed).then(() => {
+  return Promise.all(changed).then(() => {    
     return addOptions(list);
   });
 
-  function recursion(list) {
-    return list.map((field) => {
+  // Определение коллекций, которые нужно подтянуть с сервера (fetchAll)
+  function fetchCollections(list) {
+    list.forEach((field) => {
       const isLazy = appCtx.list[field.collection]?.isLazy;
       const isLoaded = appCtx.list[field.collection]?.store.getState().isLoaded;
 
       if (!isLazy && !isLoaded && isLazy != null) {
         query.push(field.collection);
-        // appCtx.list.users.store.getState().fetchAll().then(res=> console.log("cathed", res));
       }
+      // рекурсия
       if (Array.isArray(field) && field.list) {
-        return recursion(field.list);
+        fetchCollections(field.list);
       }
-      return field;
     });
   }
+
+  //TODO: сделать поиск по soughtCollection(массив) вместо list
+  // Добавляет опции к fetch-коллекциям
   function addOptions(list) {
     return list.map((field) => {
+      const isLazy = appCtx.list[field.collection]?.isLazy;
+
+      // Если поле lazy
+      if (isLazy) return field;
+
+      //Если поле fetch  
       if (field.key === soughtCollection) {
         return {
           ...field,
           options: appCtx.list[field.collection]?.store
             .getState()
             .getItems()
-            .map((item, id) => ({ key: id, value: item.item.fullName })),
+            .map((item, id) => ({ key: id, value: item.item?.fullName })),
         };
       }
+      // рекурсия
       if (Array.isArray(field) && field.list) {
-        return recursion(field.list);
+        return addOptions(field.list);
       }
       return field;
     });

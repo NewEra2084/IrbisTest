@@ -26,7 +26,6 @@ export default function LazyGridFormModalContent({
         const data = await loadFields();
         const store = await modifyCollectionFields(context, data, "orgType");
 
-        console.log(data);
         console.log(store);
 
         if (isMounted) {

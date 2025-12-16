@@ -27,7 +27,8 @@ export const AppContext = createContext({});
 // Утилита для объединения fetch и lazy сторов в единый map
 function mergeStores(fetchMap, lazyMap, collections = [], isLazy = false) {
   const merged = {};
-
+  console.log(lazyMap, fetchMap);
+  
   const lazyCollections = {};
 
   for (const [key, store] of Object.entries(lazyMap)) {
@@ -81,7 +82,7 @@ export function useAppContextValue() {
         user: useUserStore,
       },
       modal: useModalStore,
-      list: mergeStores(listFetchStoreMap, listLazyStoreMap, ["roles"], true),
+      list: mergeStores(listFetchStoreMap, listLazyStoreMap, ["users"], true),
       filters: useFilters,
       pagination: usePagination,
       translation: useTranslation,

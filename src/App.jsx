@@ -275,8 +275,6 @@ function AppRoutes() {
 
   const { auth, user, list } = main;
 
-  console.log(list);
-
   const me = auth((state) => state.me);
   const currentUser = user((state) => state.user);
 

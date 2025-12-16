@@ -5,7 +5,6 @@ function extractStoresByCollection (appCtx, collection, keys = []) {
     return keys.reduce((acc, key) => {
       if (appCtx[key]) {
         acc[key] = collection ? appCtx[key][collection] || null : null;
-        console.log("key:"+key+" collection:"+collection+" acc:"+acc[key]);
       } else {
         acc[key] = null;
       }
