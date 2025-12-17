@@ -155,7 +155,11 @@ export function createLazyStore({
      *
      * Возвращает: { count, items: [normalized] }
      */
-    fetchPage: async (filters = {}, pagination = { page: 1, pageSize: 20 }, options = {}) => {
+    fetchPage: async (
+      filters = {},
+      pagination = { page: 1, pageSize: 20 },
+      options = {}
+    ) => {
       const { name } = get();
       const { force = false } = options;
       const key = get().makePageKey(filters, pagination);
@@ -174,11 +178,12 @@ export function createLazyStore({
       set({ isLoading: true, error: null });
       try {
         const params = { ...(filters || {}), ...(pagination || {}) };
-        const raw = await collectionsApi[name].list(params);
+        const raw = await collectionsApi[name]?.list(params) || {};
 
         // ожидаем формат { items, count }
         const itemsRaw = Array.isArray(raw.items) ? raw.items : [];
-        const count = typeof raw.count === "number" ? raw.count : itemsRaw.length;
+        const count =
+          typeof raw.count === "number" ? raw.count : itemsRaw.length;
 
         const normalize = get().normalizeItem;
         const normalized = itemsRaw.map(normalize);
@@ -211,8 +216,11 @@ export function createLazyStore({
     /**
      * Альтернатива: fetchFilteredPage — просто прокси, использует fetchPage
      */
-    fetchFilteredPage: (filters = {}, pagination = { page: 1, pageSize: 20 }, options = {}) =>
-      get().fetchPage(filters, pagination, options),
+    fetchFilteredPage: (
+      filters = {},
+      pagination = { page: 1, pageSize: 20 },
+      options = {}
+    ) => get().fetchPage(filters, pagination, options),
 
     /**
      * Получить элемент по id.

@@ -168,8 +168,9 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection) {
   const changed = query.map((item) => {
     return appCtx.list[item].store.getState().fetchAll();
   });
-  return Promise.all(changed).then(() => {    
-    return addOptions(list);
+  return Promise.all(changed).then(async () => {
+    const res = await Promise.all(addOptions(list));
+    return res;
   });
 
   // Определение коллекций, которые нужно подтянуть с сервера (fetchAll)
@@ -191,20 +192,36 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection) {
   //TODO: сделать поиск по soughtCollection(массив) вместо list
   // Добавляет опции к fetch-коллекциям
   function addOptions(list) {
-    return list.map((field) => {
+    
+    return list.map(async (field) => {
       const isLazy = appCtx.list[field.collection]?.isLazy;
 
       // Если поле lazy
-      if (isLazy) return field;
-
-      //Если поле fetch  
-      if (field.key === soughtCollection) {
+      if (isLazy) {
+        const listOfCollection = await appCtx.list[field.collection]?.store
+          .getState()
+          .fetchPage({}, { page: 1, pageSize: 3 }, {});
+        const listModified = listOfCollection.items.map((item, id) => {
+          return { key: id, value: item.item.fullName };
+        });
         return {
           ...field,
-          options: appCtx.list[field.collection]?.store
-            .getState()
-            .getItems()
-            .map((item, id) => ({ key: id, value: item.item?.fullName })),
+          type: "lazy_select",
+          options: [...listModified, ...field.options],
+        };
+      }
+
+      //Если поле fetch
+      if (field.key === soughtCollection) {
+        const listOfCollection = appCtx.list[field.collection]?.store
+          .getState()
+          .getFilteredPage({}, { page: 2, pageSize: 3 })
+          .items.map((item, id) => {
+            return { key: id, value: item.item?.fullName };
+          });
+        return {
+          ...field,
+          options: [...listOfCollection, ...field.options],
         };
       }
       // рекурсия

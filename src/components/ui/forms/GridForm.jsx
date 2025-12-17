@@ -24,7 +24,7 @@ export default function GridForm({
   fields,
   cols = 1,
   template = "default",
-  controlMessages
+  controlMessages,
 }) {
   const { control, register, errors } = useGridForm();
 
@@ -33,7 +33,10 @@ export default function GridForm({
   const level = 0;
 
   return (
-    <form className="flex flex-col space-y-4" onSubmit={(e) => e.preventDefault()}>
+    <form
+      className="flex flex-col space-y-4"
+      onSubmit={(e) => e.preventDefault()}
+    >
       <div className="space-y-4">
         {rowsFields.map((row, rowIndex) => (
           <AbstractGridFormRow
@@ -76,7 +79,6 @@ export default function GridForm({
                   </AbstractGridFormCell>
                 );
               }
-
               return (
                 <AbstractGridFormCell
                   key={key}

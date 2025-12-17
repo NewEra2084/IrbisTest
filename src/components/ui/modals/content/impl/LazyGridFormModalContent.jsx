@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import GridFormModalContent from "./GridFormModalContent";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { useFetchRolesStore } from "../../../../../store/list/fetch/rolesFetchListStore";
 import { modifyCollectionFields } from "../../../../../js/utils";
 import { AppContext } from "../../../../../store/context/AppContext";
 
