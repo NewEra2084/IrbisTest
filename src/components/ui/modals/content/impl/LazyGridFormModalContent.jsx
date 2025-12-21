@@ -23,7 +23,10 @@ export default function LazyGridFormModalContent({
     const fetchFields = async () => {
       try {
         const data = await loadFields();
-        const store = await modifyCollectionFields(context, data, "orgType");
+        const store = await modifyCollectionFields(context, data, ["orgRole"], [
+          {id: 1, value: "option1"},
+          {id: 2, value: "option2"},
+        ]);
 
         console.log(store);
 

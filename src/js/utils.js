@@ -162,8 +162,9 @@ export const translateDeep = function (data, t) {
  * @param {string} soughtCollection - поле в котором нужно подменить опции
  * @returns {object[]}
  */
-export async function modifyCollectionFields(appCtx, list, soughtCollection) {
+export async function modifyCollectionFields(appCtx, list, soughtCollection, options = []) {
   const query = [];
+  const fetches = [];
   fetchCollections(list);
   const changed = query.map((item) => {
     return appCtx.list[item].store.getState().fetchAll();
@@ -181,6 +182,7 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection) {
 
       if (!isLazy && !isLoaded && isLazy != null) {
         query.push(field.collection);
+        fetches.push(field.key);
       }
       // рекурсия
       if (Array.isArray(field) && field.list) {
@@ -189,10 +191,8 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection) {
     });
   }
 
-  //TODO: сделать поиск по soughtCollection(массив) вместо list
   // Добавляет опции к fetch-коллекциям
   function addOptions(list) {
-    
     return list.map(async (field) => {
       const isLazy = appCtx.list[field.collection]?.isLazy;
 
@@ -200,28 +200,36 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection) {
       if (isLazy) {
         const listOfCollection = await appCtx.list[field.collection]?.store
           .getState()
-          .fetchPage({}, { page: 1, pageSize: 3 }, {});
+          .fetchPage({}, { page: 1, pageSize: 10 }, {});
         const listModified = listOfCollection.items.map((item, id) => {
           return { key: id, value: item.item.fullName };
         });
         return {
           ...field,
           type: "lazy_select",
-          options: [...listModified, ...field.options],
+          options: [...field.options,...listModified, ...options],
         };
       }
 
       //Если поле fetch
-      if (field.key === soughtCollection) {
+      if (fetches.includes(field.key)) {
         const listOfCollection = appCtx.list[field.collection]?.store
           .getState()
-          .getFilteredPage({}, { page: 2, pageSize: 3 })
+          .getFilteredPage({}, { page: 1, pageSize: 10 })
           .items.map((item, id) => {
             return { key: id, value: item.item?.fullName };
           });
         return {
           ...field,
-          options: [...listOfCollection, ...field.options],
+          options: [...field.options,...listOfCollection, ...options],
+        };
+      }
+
+      //в остальных случаях подставляем options, если есть soughtCollection
+      if (soughtCollection.includes(field.key)) {
+        return {
+          ...field,
+          options: [...field.options,...options],
         };
       }
       // рекурсия
