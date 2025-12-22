@@ -82,7 +82,7 @@ export function useAppContextValue() {
         user: useUserStore,
       },
       modal: useModalStore,
-      list: mergeStores(listFetchStoreMap, listLazyStoreMap, ["roles"], true),
+      list: mergeStores(listFetchStoreMap, listLazyStoreMap, ["users"], true),
       filters: useFilters,
       pagination: usePagination,
       translation: useTranslation,

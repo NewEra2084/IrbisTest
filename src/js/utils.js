@@ -200,7 +200,7 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection, opt
       if (isLazy) {
         const listOfCollection = await appCtx.list[field.collection]?.store
           .getState()
-          .fetchPage({}, { page: 1, pageSize: 10 }, {});
+          .fetchPage({}, { page: 1, pageSize: 3 }, {});
         const listModified = listOfCollection.items.map((item, id) => {
           return { key: id, value: item.item.fullName };
         });
@@ -215,7 +215,7 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection, opt
       if (fetches.includes(field.key)) {
         const listOfCollection = appCtx.list[field.collection]?.store
           .getState()
-          .getFilteredPage({}, { page: 1, pageSize: 10 })
+          .getFilteredPage({}, { page: 1, pageSize: 3 })
           .items.map((item, id) => {
             return { key: id, value: item.item?.fullName };
           });
