@@ -70,29 +70,30 @@ export function createFetchStore({
      */
     getFilteredItems: (filters = null) => {
       const { items, currentFilterData, filteredItems } = get();
-
+      
       // нет предиката или фильтров — нет фильтрации
       if (!filterItemPredicate || filters == null || Object.keys(filters).length === 0 || Object.values(filters).every(v => !v)) {
+        
         return items;
       }
-
+      
       // проверяем, изменились ли фильтры
       const changed =
-        JSON.stringify(filters) !== JSON.stringify(currentFilterData);
-
+      JSON.stringify(filters) !== JSON.stringify(currentFilterData);
+      
       if (!changed && filteredItems != null) {
         return filteredItems;
       }
-
+      
       const nextFiltered = items.filter((entry) =>
         filterItemPredicate(filters, entry.item) // <- item.item!
-      );
-
-      set({
-        filteredItems: nextFiltered,
-        currentFilterData: filters,
-      });
-
+    );
+    
+    set({
+      filteredItems: nextFiltered,
+      currentFilterData: filters,
+    });
+      
       return nextFiltered;
     },
 

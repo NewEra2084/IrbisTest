@@ -23,7 +23,7 @@ export const orgProfileFormData = {
                 { method: "required" }
             ]
         },
-        {key:"orgType", collection: "users", label:"@i18n(form.field.org_type)", type:"select",
+        {key:"orgType", collection: "users", label:"@i18n(form.field.org_type)", type:"lazy_select",
             description:"@i18n(form.description.org_type)",
             options:[
                 

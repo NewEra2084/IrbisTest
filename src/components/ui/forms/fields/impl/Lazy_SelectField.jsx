@@ -1,4 +1,27 @@
-export default function LazySelectField({ label, description, keyName, register, options, error }) {
+import { useContext, useEffect, useState } from "react";
+import { PageContext } from "@/store/context/PageContext";
+import { AppContext } from "../../../../../store/context/AppContext";
+import InputField from "./InputField"
+
+export default function LazySelectField({
+  label,
+  description,
+  keyName,
+  register,
+  options,
+  error,
+}) {
+  const PageCtx = useContext(PageContext);
+  const AppCtx = useContext(AppContext);
+  const [state, setState] = useState("");
+  const [opt, setOpt] = useState(options);
+  
+  useEffect(() => {
+    setOpt(
+      options.filter((item) => item.value.toLowerCase().includes(state.toLowerCase()))
+    );
+  }, [state, options]);
+
   return (
     <div className="flex flex-col space-y-1">
       {label && (
@@ -6,6 +29,12 @@ export default function LazySelectField({ label, description, keyName, register,
           {label}
         </label>
       )}
+      <InputField
+        register={()=>{}}
+        type="text"
+        placeholder="Введите имя"
+        onInput={(e) => setState(e.target.value)}
+      />
       <select
         {...register(keyName)}
         className={`
@@ -20,7 +49,7 @@ export default function LazySelectField({ label, description, keyName, register,
         `}
       >
         <option value="">-- выберите --</option>
-        {options.map((opt) => (
+        {opt.map((opt) => (
           <option key={opt.key} value={opt.key}>
             {opt.value}
           </option>

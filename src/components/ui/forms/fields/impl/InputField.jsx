@@ -1,4 +1,4 @@
-export default function InputField({ label, placeholder, keyName, register, error }) {
+export default function InputField({ label, placeholder, keyName, register, error, ...props }) {
   const showLabel = !!label;
   const showPlaceholder = !!placeholder;
 
@@ -10,6 +10,7 @@ export default function InputField({ label, placeholder, keyName, register, erro
         </label>
       )}
       <input
+      onInput={props.onInput}
         {...register(keyName)}
         placeholder={showPlaceholder ? placeholder : ""}
         className={`

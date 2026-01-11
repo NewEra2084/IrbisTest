@@ -213,12 +213,14 @@ export async function modifyCollectionFields(appCtx, list, soughtCollection, opt
 
       //Если поле fetch
       if (fetches.includes(field.key)) {
-        const listOfCollection = appCtx.list[field.collection]?.store
+        const appState = appCtx.list[field.collection]?.store
           .getState()
-          .getFilteredPage({}, { page: 1, pageSize: 3 })
-          .items.map((item, id) => {
+        const listOfCollection = appState
+          .getFilteredItems({search: "b"})
+          .map((item, id) => {
             return { key: id, value: item.item?.fullName };
           });
+          
         return {
           ...field,
           options: [...field.options,...listOfCollection, ...options],
